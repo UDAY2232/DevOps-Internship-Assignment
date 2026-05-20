@@ -44,5 +44,11 @@ def rpc(req: RPCRequest):
     except requests.RequestException as e:
         raise HTTPException(status_code=502, detail=f"Failed to contact Model worker: {e}")
 
-    # Return final inference
-    return {"response": model_resp.get("response", ""), "text": model_payload["text"]}
+    # Return final inference and trace information for observability.
+    # This includes the intermediate text and raw responses from TS and Model workers.
+    return {
+        "response": model_resp.get("response", ""),
+        "text": model_payload["text"],
+        "ts_response": ts_resp,
+        "model_response": model_resp,
+    }
