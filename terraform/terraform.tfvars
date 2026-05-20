@@ -1,0 +1,5 @@
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+zone       = "us-central1-a"
+repo_url   = "https://github.com/UDAY2232/DevOps-Internship-Assignment.git"
+ssh_cidr   = "YOUR.ADMIN.IP.ADD.RESS/32"

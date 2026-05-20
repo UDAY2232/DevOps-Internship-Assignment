@@ -1,0 +1,17 @@
+[Unit]
+Description=DevOps Assignment - TypeScript Worker (Node)
+After=network.target
+
+[Service]
+Type=simple
+User=devops
+Group=devops
+EnvironmentFile=/etc/devops-assignment.env
+WorkingDirectory=/opt/devops-assignment/app/workers/ts-worker
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

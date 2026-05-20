@@ -1,0 +1,17 @@
+[Unit]
+Description=DevOps Assignment - Python Worker
+After=network.target
+
+[Service]
+Type=simple
+User=devops
+Group=devops
+EnvironmentFile=/etc/devops-assignment.env
+WorkingDirectory=/opt/devops-assignment/app/workers
+ExecStart=/opt/devops-worker-venv/bin/uvicorn python_worker:app --host 0.0.0.0 --port ${PYTHON_WORKER_PORT}
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

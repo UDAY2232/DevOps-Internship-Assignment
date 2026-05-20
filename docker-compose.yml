@@ -1,0 +1,56 @@
+version: '3.8'
+services:
+  model-worker:
+    build:
+      context: .
+      dockerfile: app/workers/model-worker.Dockerfile
+    container_name: model-worker
+    networks:
+      - internal
+    restart: unless-stopped
+
+  ts-worker:
+    build:
+      context: .
+      dockerfile: app/workers/ts-worker/Dockerfile
+    container_name: ts-worker
+    networks:
+      - internal
+    depends_on:
+      - model-worker
+    restart: unless-stopped
+
+  python-worker:
+    build:
+      context: .
+      dockerfile: app/workers/python-worker.Dockerfile
+    container_name: python-worker
+    networks:
+      - internal
+    depends_on:
+      - ts-worker
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: app/api/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"  # Public-facing API
+    environment:
+      - PYTHON_WORKER_HOST=python-worker
+      - PYTHON_WORKER_PORT=9001
+      - TS_WORKER_HOST=ts-worker
+      - TS_WORKER_PORT=9002
+      - MODEL_WORKER_HOST=model-worker
+      - MODEL_WORKER_PORT=9003
+    networks:
+      - internal
+    depends_on:
+      - python-worker
+    restart: unless-stopped
+
+networks:
+  internal:
+    driver: bridge
